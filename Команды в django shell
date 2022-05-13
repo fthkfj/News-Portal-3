@@ -1,0 +1,109 @@
+>>> from news.models import User
+>>> User.objects.create_user('Ivan Petrov')
+<User: Ivan Petrov>
+>>> User.objects.create_user('Alex Gromov')
+<User: Alex Gromov>
+#Cоздаем пользователей
+
+>>> from news.models import User, Author
+>>> User.objects.all()
+<QuerySet [<User: admin>, <User: Ivan Petrov>, <User: Alex Gromov>]>
+>>> a = User.objects.all()[1]
+<Author: Author object (1)>
+>>> b = User.objects.all()[2]
+>>> Author.objects.create(users = b)
+<Author: Author object (2)>
+#Модель автора
+
+>>> from news.models import Category
+>>> Category.objects.create(category = 'Экономика')
+<Category: Category object (1)>
+>>> Category.objects.create(category = 'Спорт')
+<Category: Category object (2)>
+>>> Category.objects.create(category = 'Музыка')
+<Category: Category object (3)>
+>>> Category.objects.create(category = 'Путешествия')
+<Category: Category object (4)>
+>>> exit()
+#Категории
+
+>>> from news.models import User, Author, Category, Post
+>>> a = Author.objects.all()[0]
+>>> Post.objects.create(authors = a, CategoryType = 'ar', title = 'Title', text = 'my text', ratings = '255')
+<Post: Post object (1)>
+>>> b = Author.objects.all()[1]
+>>> Post.objects.create(authors = b, CategoryType = 'nw', title = 'Title', text = 'new text', ratings = '148')
+<Post: Post object (2)>
+>>> Post.objects.create(authors = a, CategoryType = 'ar', title = 'Title', text = 'all text', ratings = '260')
+<Post: Post object (3)>
+#Статьи/Новости
+
+>>> from news.models import Category, Post, PostCategory  
+>>> a = Post.objects.all()[0]
+>>> b = Category.objects.all()[1]
+>>> PostCategory.objects.create(PostTrough = a, CategoryTrough = b)
+<PostCategory: PostCategory object (1)>
+>>> c = Post.objects.all()[1]
+>>> d = Category.objects.all()[0]
+>>> PostCategory.objects.create(PostTrough = c, CategoryTrough = d)
+<PostCategory: PostCategory object (2)>
+>>> e = Post.objects.all()[2]
+>>> f = Category.objects.all()[2]
+>>> g = Category.objects.all()[3]
+>>> PostCategory.objects.create(PostTrough = e, CategoryTrough = f)    
+<PostCategory: PostCategory object (3)>
+>>> PostCategory.objects.create(PostTrough = e, CategoryTrough = g)  
+<PostCategory: PostCategory object (4)>
+#ПостКатегории
+
+>>> from news.models import User, Post, Comment
+>>> a = Post.objects.all()[0]  
+>>> b = User.objects.all()[0]
+>>> c = Post.objects.all()[1]
+>>> d = User.objects.all()[1]
+>>> e = Post.objects.all()[2]
+>>> f = User.objects.all()[2]
+>>> Comment.objects.create(CommentPost = a, CommentUser = b, text = 'Вот это да!', ratings = '24')
+<Comment: Comment object (1)>
+>>> Comment.objects.create(CommentPost = c, CommentUser = d, text = 'Это жизнь...', ratings = '25')
+<Comment: Comment object (2)>
+>>> Comment.objects.create(CommentPost = e, CommentUser = f, text = 'А что, так можно было?', ratings = '27')
+<Comment: Comment object (3)>
+>>> Comment.objects.create(CommentPost = e, CommentUser = b, text = 'Жизнь меня к такому не готовила', ratings = '26')
+<Comment: Comment object (4)>
+#Комментарии
+
+>>> from news.models import User, Author, Post, PostCategory, Comment
+>>> a = Post.objects.all()[0]
+>>> a.like()
+>>> a.save()
+>>> b = Comment.objects.all()[1]  
+>>> b.dislike()
+>>> b.save()
+>>> c = Post.objects.all()[1]
+>>> c.dislike()
+>>> c.save()
+>>> d = Comment.objects.all()[0]
+>>> d.like()
+>>> d.save()
+>>> e = Comment.objects.all()[2]
+>>> e.dislike()
+>>> e.save()
+#Лайки/Дизлайки
+
+>>> Author.objects.order_by('rating')
+<QuerySet [<Author: Author object (2)>, <Author: Author object (1)>]>
+#Расположение авторов по рейтингу
+
+a = Author.objects.all().order_by(-rating).values('users', 'rating')[0]
+print(a)
+#Рейтинг лучшего пользователя
+
+Post.objects.all().order_by('-ratings').values('DateCreation', 'postAuthor_ authorUser__username', 'rating', 'preview_name', 'text')[0]
+#Дата добавления, автор, рейтинг, превью лучшейстатьи
+
+Comment.objects.all().order_by().values('DateCreation', 'CommentUser', 'CommentPost', 'ratings', 'text')[0]
+#Все комментарии к этой статье
+
+
+
